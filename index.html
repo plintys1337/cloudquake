@@ -163,6 +163,53 @@
   .menu-btn.active span:nth-child(2) { opacity: 0; width: 0; }
   .menu-btn.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
+  /* ========== ПЛАВАЮЩАЯ КНОПКА КОРЗИНЫ (FAB) ========== */
+  .fab-cart {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 95;
+    display: flex;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.15);
+    cursor: pointer;
+    transition: transform .35s var(--ease), background .3s, box-shadow .3s;
+  }
+
+  .fab-cart:hover {
+    background: #333;
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18);
+  }
+  .fab-cart:active { transform: scale(.95); }
+
+  .fab-cart svg { display: block; }
+
+  .fab-cart .fab-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    border-radius: 100px;
+    background: #fff;
+    color: #111;
+    font-size: 11px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #111;
+  }
+  .fab-cart .fab-count.visible { display: inline-flex; }
+
   /* ========== ГЕРОЙ ========== */
   .hero {
     height: 100svh; min-height: 720px; position: relative;
@@ -231,10 +278,18 @@
   }
 
   .hero-bottom {
-    position: absolute; left: 34px; right: 34px; bottom: 25px;
-    display: flex; justify-content: space-between;
+    position: absolute; left: 0; right: 0; bottom: 25px;
+    display: flex; justify-content: center;
     font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
-    z-index: 4;
+    z-index: 5;
+    color: black;
+    pointer-events: none;
+  }
+  .hero-bottom span {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 999px;
   }
 
   /* ========== КАТЕГОРИИ ========== */
@@ -316,47 +371,52 @@
 
   .drop-head {
     display: flex;
-    align-items: flex-end;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 40px;
+    gap: 24px;
     margin-bottom: 40px;
     flex-wrap: wrap;
   }
 
   .drop-title-wrap {
     display: flex;
-    align-items: flex-end;
-    gap: 20px;
+    align-items: baseline;
+    gap: 16px;
+    flex-shrink: 0;
   }
 
   .drop-title {
     display: flex;
     align-items: baseline;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-size: clamp(52px, 6.4vw, 104px);
+    gap: 12px;
+    font-size: clamp(32px, 4vw, 58px);
     font-weight: 400;
-    letter-spacing: -.05em;
-    line-height: .85;
+    letter-spacing: -.04em;
+    line-height: .95;
+    white-space: nowrap;
   }
-  .drop-title .word { font-family: inherit; }
+  .drop-title .word {
+    font-family: inherit;
+    line-height: 1;
+  }
   .drop-title .word-em {
     font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
     font-style: italic;
     font-weight: 500;
     color: #999;
     letter-spacing: -.02em;
-    transform: skewX(-2deg) translateY(6px);
+    transform: skewX(-2deg);
     display: inline-block;
+    line-height: 1;
   }
 
   .drop-filters {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     gap: 18px;
     flex-shrink: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .filter-count {
@@ -368,14 +428,15 @@
     white-space: nowrap;
     padding-right: 14px;
     border-right: 1px solid #e3e0d8;
+    line-height: 1;
   }
   .filter-count strong { color: #111; font-weight: 600; }
 
   .filter-chips {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    flex-wrap: nowrap;
+    align-items: baseline;
   }
 
   .filter-chip {
@@ -431,7 +492,9 @@
     background: #fff; border: 0; padding: 0; text-align: left; color: inherit;
   }
   .drop-item-image {
-    position: relative; aspect-ratio: 3/4; background: #f6f5f1;
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: #f6f5f1;
     overflow: hidden; margin-bottom: 20px;
   }
   .drop-item-image .thumb {
@@ -517,18 +580,279 @@
   }
   .editorial-text > p + p:not(.eyebrow) { margin-top: 14px; }
 
-  .line-link {
-    margin-top: 34px; width: max-content;
-    border-bottom: 1px solid #777; padding-bottom: 6px;
-    font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
-    font-weight: 600; transition: border-color .25s;
-    display: inline-flex; align-items: center; gap: 10px;
+  /* ========== АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ========== */
+  .auth-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 220;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .35s var(--ease), visibility .35s var(--ease);
   }
-  .line-link:hover { border-color: #fff; }
-  .line-link span { display: inline-block; transition: transform .35s var(--ease); }
-  .line-link:hover span { transform: translateY(4px); }
 
-  /* ========== МОДАЛЬНОЕ ОКНО ========== */
+  .auth-modal.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .auth-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,10,.68);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .auth-modal-content {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 520px);
+    max-height: min(760px, calc(100vh - 40px));
+    overflow: hidden;
+    background: #fff;
+    border-radius: 24px;
+    padding: 38px;
+    box-shadow: 0 30px 90px rgba(0,0,0,.3), 0 5px 20px rgba(0,0,0,.12);
+    transform: translateY(28px) scale(.97);
+    transition: transform .45s var(--ease);
+  }
+
+  .auth-modal.open .auth-modal-content {
+    transform: translateY(0) scale(1);
+  }
+
+  .auth-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #f5f4f1;
+    color: #111;
+    font-size: 25px;
+    font-weight: 300;
+    transition: background .25s, color .25s, transform .35s var(--ease);
+  }
+
+  .auth-modal-close:hover {
+    background: #111;
+    color: #fff;
+    transform: rotate(90deg);
+  }
+
+  .auth-modal-head {
+    padding-right: 46px;
+    margin-bottom: 26px;
+  }
+
+  .auth-modal-head .eyebrow {
+    color: #999;
+    font-size: 10px;
+    letter-spacing: .16em;
+    margin-bottom: 12px;
+  }
+
+  .auth-modal-head h2 {
+    font-size: clamp(30px, 5vw, 42px);
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: -.04em;
+    margin-bottom: 12px;
+  }
+
+  .auth-modal-head p:last-child {
+    color: #777;
+    font-size: 13px;
+    line-height: 1.65;
+    max-width: 390px;
+  }
+
+  .auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    background: #f5f4f1;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+
+  .auth-tab {
+    min-height: 44px;
+    border-radius: 9px;
+    color: #777;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    transition: background .25s, color .25s, box-shadow .25s;
+  }
+
+  .auth-tab.active {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  }
+
+  .auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .auth-form.active {
+    display: flex;
+  }
+
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .auth-field > span:first-child {
+    color: #555;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .auth-field input[type="email"],
+  .auth-field input[type="text"],
+  .auth-field input[type="password"] {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 15px;
+    border: 1px solid #dedcd6;
+    border-radius: 10px;
+    outline: none;
+    background: #fff;
+    color: #111;
+    font-size: 15px;
+    transition: border-color .25s, box-shadow .25s, background .25s;
+  }
+
+  .auth-field input:focus {
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(17,17,17,.07);
+  }
+
+  .auth-field input::placeholder {
+    color: #b1afa9;
+  }
+
+  .auth-input-wrap {
+    position: relative;
+    display: block;
+  }
+
+  .auth-input-wrap input {
+    padding-right: 78px !important;
+  }
+
+  .auth-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #777;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .auth-password-toggle:hover {
+    color: #111;
+  }
+
+  .auth-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: -2px;
+  }
+
+  .auth-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.45;
+    cursor: pointer;
+  }
+
+  .auth-check input {
+    width: 16px;
+    height: 16px;
+    margin: 1px 0 0;
+    accent-color: #111;
+    flex: 0 0 auto;
+  }
+
+  .auth-link {
+    color: #555;
+    font-size: 11px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+
+  .auth-link:hover {
+    color: #111;
+  }
+
+  .auth-submit {
+    width: 100%;
+    min-height: 54px;
+    margin-top: 4px;
+    padding: 0 20px;
+    background: #111;
+    color: #fff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: .16em;
+    font-weight: 600;
+    transition: background .25s, transform .3s var(--ease);
+  }
+
+  .auth-submit:hover {
+    background: #333;
+    transform: translateY(-1px);
+  }
+
+  .auth-submit span {
+    font-size: 16px;
+  }
+
+  .auth-agreement {
+    margin-top: -2px;
+  }
+
+  .auth-status {
+    min-height: 18px;
+    margin-top: 14px;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* ========== МОДАЛЬНОЕ ОКНО ТОВАРА ========== */
   .product-modal {
     position: fixed; inset: 0; z-index: 200;
     display: grid; place-items: center; padding: 30px;
@@ -545,7 +869,9 @@
   .product-modal-content {
     position: relative; z-index: 2; background: #fff;
     width: auto; max-width: 96vw; max-height: 92vh;
-    overflow: auto; display: grid; grid-template-columns: auto 1fr;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto minmax(340px, 420px);
     transform: translateY(30px) scale(.98);
     transition: transform .45s var(--ease);
   }
@@ -561,14 +887,22 @@
   .product-modal-close:hover { background: #111; color: #fff; transform: rotate(90deg); }
 
   .product-modal-photo {
-    position: relative; background: #f1f0ec;
-    height: 100%; max-height: 92vh;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    position: relative;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    max-height: 92vh;
   }
+
   .product-modal-photo .modal-thumb {
-    width: 100%; height: 100%; min-height: 420px; min-width: 340px;
+    height: 92vh;
+    aspect-ratio: 4 / 5;
+    width: auto;
     max-width: 60vw;
     background-size: cover;
+    background-repeat: no-repeat;
     background-position: center;
   }
 
@@ -576,6 +910,7 @@
     position: relative;
     padding: 55px 50px; display: flex; flex-direction: column;
     gap: 26px; min-width: 340px; max-width: 480px;
+    overflow-y: auto;
   }
 
   .product-modal-info .eyebrow { color: #999; }
@@ -625,10 +960,12 @@
     font-size: 10px; color: #999; font-weight: 600;
   }
 
-  /* ========== ФУТЕР ========== */
+  /* ========== ФУТЕР — БЕЛЫЙ ========== */
   footer {
-    background: #0e0e0e; color: #e9e6df;
+    background: #fff;
+    color: #111;
     padding: 90px 40px 28px;
+    border-top: 1px solid #e9e6df;
   }
 
   .footer-top {
@@ -636,61 +973,74 @@
     grid-template-columns: 1.8fr 1fr;
     gap: 80px;
     padding-bottom: 60px;
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid #e9e6df;
   }
 
   .footer-brand .logo {
-    color: #fff; font-size: 34px; padding: 0;
+    color: #111;
+    font-size: 34px;
+    padding: 0;
     font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
     letter-spacing: .14em;
     display: inline-block;
   }
-  .footer-brand .logo::after { background: #fff; }
+  .footer-brand .logo::after { background: #111; }
   .footer-brand p {
-    font-size: 13px; line-height: 1.75; color: #9a9a9a; margin-top: 18px;
+    font-size: 13px; line-height: 1.75; color: #666; margin-top: 18px;
     max-width: 340px;
   }
 
   .footer-col h4 {
     font-size: 11px; text-transform: uppercase; letter-spacing: .2em;
-    color: #7d7d7d; font-weight: 600; margin-bottom: 22px;
+    color: #999; font-weight: 600; margin-bottom: 22px;
   }
 
   .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
   .footer-col button {
-    font-size: 13.5px; color: #d8d5ce; text-align: left;
+    font-size: 13.5px; color: #333; text-align: left;
     position: relative; padding-bottom: 2px;
     transition: color .25s;
   }
   .footer-col button::after {
     content: ""; position: absolute; left: 0; bottom: 0;
-    width: 0; height: 1px; background: #fff;
+    width: 0; height: 1px; background: #111;
     transition: width .35s var(--ease);
   }
-  .footer-col button:hover { color: #fff; }
+  .footer-col button:hover { color: #111; }
   .footer-col button:hover::after { width: 100%; }
 
   .footer-bottom {
     padding-top: 24px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 10.5px; color: #7d7d7d;
+    font-size: 10.5px; color: #888;
     text-transform: uppercase; letter-spacing: .12em;
     flex-wrap: wrap; gap: 14px;
   }
   .footer-bottom nav { display: flex; gap: 22px; }
-  .footer-bottom button { color: #7d7d7d; transition: color .25s; }
-  .footer-bottom button:hover { color: #fff; }
+  .footer-bottom button { color: #888; transition: color .25s; }
+  .footer-bottom button:hover { color: #111; }
 
   /* ========== КОРЗИНА ========== */
   .cart {
     position: fixed; z-index: 100; right: 0; top: 0;
     width: min(460px, 100%); height: 100vh; background: #fff;
     transform: translateX(100%);
-    transition: transform .5s var(--ease);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform .5s var(--ease),
+      visibility 0s linear .5s;
     display: flex; flex-direction: column;
     box-shadow: -20px 0 60px rgba(0,0,0,.15);
   }
-  .cart.open { transform: none; }
+  .cart.open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      transform .5s var(--ease),
+      visibility 0s linear 0s;
+  }
 
   .backdrop {
     position: fixed; inset: 0; background: rgba(0,0,0,.4);
@@ -938,7 +1288,7 @@
     .hero-copy { font-size: 16px; max-width: 100%; }
     .hero .eyebrow { font-size: 12px; }
     .pill-btn { font-size: 14px; padding: 16px 24px; }
-    .hero-bottom { left: 20px; right: 20px; font-size: 11px; }
+    .hero-bottom { left: 0; right: 0; font-size: 11px; }
     .hero-fade { height: 200px; }
 
     .categories { padding: 0 20px 32px; padding-top: 70px; }
@@ -960,20 +1310,20 @@
       margin-bottom: 32px;
     }
     .drop-filters {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
       width: 100%;
       gap: 14px;
+      flex-wrap: wrap;
     }
     .filter-count {
-      border-right: 0;
-      padding-right: 0;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e3e0d8;
-      width: 100%;
+      border-right: 1px solid #e3e0d8;
+      padding-right: 14px;
+      border-bottom: 0;
+      padding-bottom: 0;
+      width: auto;
     }
     .filter-chips { justify-content: flex-start; }
-    .drop-title { font-size: 54px; gap: 14px; }
     .filter-chip { padding: 9px 16px; font-size: 12px; }
 
     .drop-grid { grid-template-columns: 1fr 1fr; gap: 30px 16px; }
@@ -983,11 +1333,23 @@
     .product-modal { padding: 12px; }
     .product-modal-content {
       grid-template-columns: 1fr; width: 100%;
-      max-width: 92vw; max-height: 92vh;
+      max-width: 92vw;
+      max-height: calc(100vh - 60px);
     }
-    .product-modal-photo { height: 46vh; }
+    .product-modal-photo {
+      height: auto;
+      max-height: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .product-modal-photo .modal-thumb {
-      min-height: 0; min-width: 0; width: 100%; height: 100%;
+      width: 100%;
+      height: 46vh;
+      max-width: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
     .product-modal-info {
       padding: 40px 24px 36px; gap: 20px;
@@ -1069,8 +1431,6 @@
     .drop-item-info h3 { font-size: 17px; }
     .drop-item-info strong { font-size: 19px; }
 
-    .drop-title { font-size: 42px; }
-
     .product-modal-info { padding: 36px 20px 32px; }
     .product-modal-meta { grid-template-columns: 1fr; }
 
@@ -1097,7 +1457,7 @@
   }
 
   /* =========================================================
-     ДОПОЛНИТЕЛЬНЫЙ АДАПТИВ
+     ДОПОЛНИТЕЛЬНЫЙ АДАПТИВ (≤1200px)
      ========================================================= */
 
   @keyframes mobileNavIn {
@@ -1184,18 +1544,45 @@
       gap: 30px 18px;
     }
 
-    .editorial-text { padding-left: 6vw; padding-right: 6vw; }
-
-    /* === КОРЗИНА ~85% ЭКРАНА, ИЗ ПРАВОГО ВЕРХНЕГО УГЛА === */
-    .cart {
-      width: min(430px, 85vw);
-      height: 85vh;
-      top: 90px;
-      right: 16px;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: -18px 18px 55px rgba(0,0,0,.22);
+    .drop-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 20px 24px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
     }
+
+    .drop-title-wrap { flex-shrink: 0; }
+
+    .drop-filters {
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+    }
+
+    .filter-count {
+      border-right: 1px solid #e3e0d8;
+      padding-right: 14px;
+      border-bottom: 0;
+      padding-bottom: 0;
+      font-size: 11.5px;
+      letter-spacing: .14em;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .filter-chips {
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+
+    .editorial-text { padding-left: 6vw; padding-right: 6vw; }
 
     .backdrop { background: rgba(0,0,0,.46); }
   }
@@ -1250,6 +1637,13 @@
   }
 
   @media (max-width: 767px) {
+    .hero,
+    .hero-fade,
+    .categories {
+      border-top: 0 !important;
+      border-bottom: 0 !important;
+    }
+
     .header {
       top: 10px;
       left: 10px;
@@ -1303,10 +1697,27 @@
     .hero h1 { font-size: clamp(50px, 15vw, 78px); margin: 18px 0 22px; }
     .hero-copy { font-size: 15px; line-height: 1.55; margin-bottom: 28px; }
     .pill-btn { padding: 14px 20px; font-size: 12px; }
-    .hero-bottom { left: 18px; right: 18px; bottom: 18px; font-size: 9.5px; }
-    .hero-fade { height: 150px; }
+    .hero-bottom { left: 0; right: 0; bottom: 18px; font-size: 9.5px; }
 
-    .categories { padding: 62px 16px 28px; }
+    .hero-fade {
+      display: block;
+      height: 200px;
+      bottom: -1px;
+    }
+
+    .categories {
+      padding: 38px 16px 28px;
+      padding-top: 38px;
+      border-top: 0 !important;
+    }
+
+    .hero-bottom span {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
 
     .section-head {
       flex-direction: column;
@@ -1328,23 +1739,74 @@
     .category-card b { font-size: 9px; }
 
     .drop { padding: 34px 16px 60px; }
-    .drop-head { gap: 20px; margin-bottom: 28px; }
-    .drop-title { font-size: clamp(42px, 12vw, 58px); gap: 10px; }
 
-    .drop-filters { gap: 12px; }
-    .filter-count { width: 100%; }
+    .drop-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      column-gap: 12px;
+      row-gap: 16px;
+      width: 100%;
+    }
+
+    .drop-title-wrap {
+      grid-column: 1;
+      grid-row: 1;
+      width: auto;
+      min-width: 0;
+      align-items: flex-end;
+    }
+
+    .drop-title {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      gap: 8px;
+      font-size: clamp(36px, 10.5vw, 54px);
+      line-height: .95;
+      letter-spacing: -.05em;
+    }
+
+    .drop-filters { display: contents; }
+
+    .filter-count {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      width: auto;
+      padding: 0;
+      border: 0;
+      white-space: nowrap;
+      font-size: 10px;
+      letter-spacing: .11em;
+      color: #999;
+      line-height: 1.2;
+    }
+
+    .filter-count strong { color: #111; }
 
     .filter-chips {
+      grid-column: 1 / -1;
+      grid-row: 2;
       width: 100%;
-      justify-content: flex-start;
-      overflow-x: auto;
+      justify-content: center;
+      align-items: center;
       flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 7px;
+      margin-top: 0;
       padding-bottom: 4px;
       scrollbar-width: none;
     }
+
     .filter-chips::-webkit-scrollbar { display: none; }
 
-    .filter-chip { flex: 0 0 auto; padding: 9px 15px; font-size: 11px; }
+    .filter-chip {
+      flex: 0 0 auto;
+      padding: 9px 14px;
+      font-size: 10.5px;
+    }
 
     .drop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 12px; }
     .drop-item-image { margin-bottom: 12px; }
@@ -1369,19 +1831,206 @@
     .footer-top { grid-template-columns: 1fr 1fr; gap: 30px; padding-bottom: 40px; }
     .footer-brand { grid-column: 1 / -1; }
 
-    .product-modal { padding: 12px; }
+    /* =====================================================
+       АВТОРИЗАЦИЯ НА ТЕЛЕФОНЕ — компактная, не на весь экран
+       ===================================================== */
+    .auth-modal {
+      padding: 20px 16px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .auth-modal-content {
+      width: min(100%, 480px);
+      max-width: 480px;
+      height: auto;
+      max-height: 90dvh;
+      min-height: 0;
+      padding: 34px 24px 26px;
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.32), 0 4px 18px rgba(0,0,0,.14);
+      overflow-y: auto;
+    }
+
+    .auth-modal-close {
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+    }
+
+    .auth-modal-head {
+      padding-right: 42px;
+      margin-bottom: 18px;
+    }
+
+    .auth-modal-head h2 { font-size: clamp(26px, 7.5vw, 34px); }
+
+    .auth-modal-head p:last-child {
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .auth-tabs { margin-bottom: 18px; }
+
+    .auth-tab {
+      min-height: 44px;
+      font-size: 11px;
+    }
+
+    .auth-form { gap: 13px; }
+
+    .auth-field input[type="email"],
+    .auth-field input[type="text"],
+    .auth-field input[type="password"] {
+      min-height: 50px;
+      font-size: 15px;
+      border-radius: 11px;
+    }
+
+    .auth-row { align-items: flex-start; }
+    .auth-check { font-size: 11.5px; }
+    .auth-link { font-size: 10.5px; }
+
+    .auth-submit {
+      min-height: 52px;
+      border-radius: 11px;
+    }
+
+    .auth-status { margin-top: 12px; }
+
+    /* =====================================================
+       МОДАЛЬНОЕ ОКНО ТОВАРА НА ТЕЛЕФОНЕ
+       ===================================================== */
+    .product-modal {
+      padding: 10px;
+      align-items: center;
+      justify-items: center;
+    }
+
     .product-modal-content {
       width: min(100%, 520px);
       max-width: 520px;
-      max-height: calc(100vh - 24px);
-      border-radius: 14px;
-      overflow: auto;
+      max-height: 92vh;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, .28),
+        0 4px 18px rgba(0, 0, 0, .12);
+      transform: translateY(40px) scale(.97);
+      transform-origin: center center;
     }
-    .product-modal-photo { height: min(58vh, 430px); }
-    .product-modal-info { padding: 30px 20px 26px; gap: 18px; }
-    .product-modal-close { top: 10px; right: 10px; width: 36px; height: 36px; }
 
-    /* === КОРЗИНА ~85% ЭКРАНА, ИЗ ПРАВОГО ВЕРХНЕГО УГЛА === */
+    .product-modal.open .product-modal-content {
+      transform: translateY(0) scale(1);
+    }
+
+    .product-modal-photo {
+      position: relative;
+      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f1f0ec;
+      flex-shrink: 0;
+      padding: 8px;
+    }
+
+    .product-modal-photo .modal-thumb {
+      width: 100%;
+      height: 44vh;
+      max-width: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .product-modal-info {
+      padding: 20px 20px 22px;
+      gap: 14px;
+      min-width: 0;
+      max-width: none;
+      overflow-y: auto;
+    }
+
+    .product-modal-info .eyebrow {
+      font-size: 10px;
+      letter-spacing: .16em;
+      margin: 0;
+    }
+
+    .product-modal-info h2 {
+      font-size: 25px;
+      line-height: 1.08;
+      margin: 0;
+    }
+
+    .product-modal-price {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .product-modal-desc {
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+
+    .product-modal-divider { margin: 0; }
+    .product-modal-sizes { gap: 8px; }
+
+    .product-modal-sizes > span {
+      font-size: 10px;
+      letter-spacing: .12em;
+    }
+
+    .size-list { gap: 6px; }
+
+    .size-btn {
+      min-width: 42px;
+      height: 42px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .product-modal-add {
+      margin-top: 0;
+      padding: 15px 18px;
+      font-size: 10.5px;
+      letter-spacing: .15em;
+    }
+
+    .product-modal-meta {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+      padding-top: 0;
+      font-size: 11px;
+    }
+
+    .product-modal-meta div { gap: 2px; }
+    .product-modal-meta span { font-size: 8px; }
+
+    .product-modal-close {
+      top: 10px;
+      right: 10px;
+      width: 38px;
+      height: 38px;
+      z-index: 6;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, .12);
+    }
+
+    /* =====================================================
+       КОРЗИНА НА ТЕЛЕФОНЕ — компактная
+       ===================================================== */
     .cart {
       width: min(400px, 85vw);
       height: 85vh;
@@ -1389,6 +2038,7 @@
       right: 12px;
       border-radius: 16px;
       box-shadow: -12px 16px 45px rgba(0,0,0,.22);
+      overflow: hidden;
     }
 
     .cart-head { padding: 17px 18px; }
@@ -1405,6 +2055,13 @@
     .search-panel { padding: 100px 16px 30px; }
     .search-box { padding: 14px 16px; }
     .search-panel input { font-size: 15px; }
+
+    .fab-cart {
+      right: 14px;
+      bottom: 14px;
+      width: 54px;
+      height: 54px;
+    }
   }
 
   @media (max-width: 480px) {
@@ -1426,7 +2083,6 @@
     .drop-item-info h3 { font-size: 16px; }
     .drop-item-info strong { font-size: 18px; }
 
-    /* === КОРЗИНА ~85% ЭКРАНА, ИЗ ПРАВОГО ВЕРХНЕГО УГЛА === */
     .cart {
       width: 85vw;
       height: 85vh;
@@ -1450,62 +2106,45 @@
     .checkout { padding: 14px 15px; }
   }
 
-  /* =========================================================
-     ФИНАЛЬНЫЕ ПРАВИЛА: ШАПКА И КОРЗИНА
-     ========================================================= */
-  @media (max-width: 1199px) {
-    .header {
-      transform: translateY(calc(-100% - 24px));
-      opacity: 1 !important;
-      transition: transform .5s var(--ease);
-      will-change: transform;
+  @media (max-width: 380px) {
+    .drop-title {
+      font-size: 35px;
+      gap: 7px;
     }
 
-    .header.adaptive-visible { transform: translateY(0); }
-
-    .header .menu-btn {
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 44px;
-      width: 44px;
-      min-width: 44px;
-      height: 44px;
-      min-height: 44px;
-      padding: 0 !important;
-      margin-left: 8px;
-      position: relative;
-      z-index: 1001;
-      visibility: visible !important;
-      opacity: 1 !important;
+    .filter-count {
+      font-size: 9px;
+      letter-spacing: .08em;
     }
 
-    .header .menu-btn span {
-      display: block !important;
-      width: 20px !important;
-      height: 2px !important;
-      margin: 0 !important;
-      background: #fff !important;
-      opacity: 1;
+    .product-modal-content {
+      max-height: 94vh;
+      border-radius: 18px;
     }
 
-    /* Корзина выезжает справа, но занимает ~85% экрана */
-    .cart {
-      transform: translateX(calc(100% + 40px));
-      visibility: hidden;
-      pointer-events: none;
-      transition:
-        transform .5s var(--ease),
-        visibility 0s linear .5s;
+    .product-modal-photo { padding: 6px; }
+
+    .product-modal-photo .modal-thumb {
+      height: 38vh;
     }
 
-    .cart.open {
-      transform: translateX(0);
-      visibility: visible;
-      pointer-events: auto;
-      transition:
-        transform .5s var(--ease),
-        visibility 0s linear 0s;
+    .product-modal-info {
+      padding: 16px 14px 18px;
+      gap: 10px;
+    }
+
+    .product-modal-info h2 { font-size: 21px; }
+    .product-modal-price { font-size: 19px; }
+
+    .product-modal-desc {
+      font-size: 12px;
+      -webkit-line-clamp: 2;
+    }
+
+    .size-btn {
+      min-width: 38px;
+      height: 38px;
+      padding: 0 9px;
     }
   }
 </style>
@@ -1521,10 +2160,19 @@
     </nav>
     <div class="header-actions">
       <button class="text-btn" id="searchBtn">Поиск</button>
-      <button class="icon-btn" id="bagBtn">Корзина</button>
+      <button class="icon-btn" id="bagBtn">Войти</button>
       <button class="menu-btn" id="menuBtn" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
+
+  <button class="fab-cart" id="fabCart" type="button" aria-label="Открыть корзину">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+    <span class="fab-count" id="fabCount">0</span>
+  </button>
 
   <main>
     <section class="hero">
@@ -1538,7 +2186,6 @@
         <button class="pill-btn" data-scroll="shop">Смотреть коллекцию</button>
       </div>
       <div class="hero-bottom">
-        <span>01 — 04</span>
         <span>Листайте вниз ↓</span>
       </div>
     </section>
@@ -1605,7 +2252,85 @@
     </section>
   </main>
 
-  <!-- МОДАЛЬНОЕ ОКНО -->
+  <!-- АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ -->
+  <div class="auth-modal" id="authModal" aria-hidden="true">
+    <div class="auth-modal-backdrop" id="authModalBackdrop"></div>
+    <div class="auth-modal-content" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <button class="auth-modal-close" id="authModalClose" type="button" aria-label="Закрыть">×</button>
+
+      <div class="auth-modal-head">
+        <p class="eyebrow">Личный кабинет / NOIR</p>
+        <h2 id="authModalTitle">С возвращением</h2>
+        <p id="authModalSubtitle">Войдите, чтобы сохранять данные и оформлять заказы быстрее.</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Авторизация">
+        <button class="auth-tab active" type="button" data-auth-tab="login" role="tab" aria-selected="true">Войти</button>
+        <button class="auth-tab" type="button" data-auth-tab="register" role="tab" aria-selected="false">Регистрация</button>
+      </div>
+
+      <form class="auth-form active" id="loginForm">
+        <label class="auth-field">
+          <span>Email</span>
+          <input type="email" name="login-email" autocomplete="email" placeholder="you@example.com" required>
+        </label>
+
+        <label class="auth-field">
+          <span>Пароль</span>
+          <span class="auth-input-wrap">
+            <input type="password" name="login-password" autocomplete="current-password" placeholder="Введите пароль" required>
+            <button class="auth-password-toggle" type="button" data-password-toggle aria-label="Показать пароль">Показать</button>
+          </span>
+        </label>
+
+        <div class="auth-row">
+          <label class="auth-check">
+            <input type="checkbox" name="remember">
+            <span>Запомнить меня</span>
+          </label>
+          <button class="auth-link" type="button" id="forgotPassword">Забыли пароль?</button>
+        </div>
+
+        <button class="auth-submit" type="submit">Войти <span>→</span></button>
+      </form>
+
+      <form class="auth-form" id="registerForm">
+        <label class="auth-field">
+          <span>Имя</span>
+          <input type="text" name="register-name" autocomplete="name" placeholder="Ваше имя" required>
+        </label>
+
+        <label class="auth-field">
+          <span>Email</span>
+          <input type="email" name="register-email" autocomplete="email" placeholder="you@example.com" required>
+        </label>
+
+        <label class="auth-field">
+          <span>Пароль</span>
+          <span class="auth-input-wrap">
+            <input type="password" name="register-password" autocomplete="new-password" placeholder="Не менее 6 символов" minlength="6" required>
+            <button class="auth-password-toggle" type="button" data-password-toggle aria-label="Показать пароль">Показать</button>
+          </span>
+        </label>
+
+        <label class="auth-field">
+          <span>Повторите пароль</span>
+          <input type="password" name="register-password-confirm" autocomplete="new-password" placeholder="Повторите пароль" minlength="6" required>
+        </label>
+
+        <label class="auth-check auth-agreement">
+          <input type="checkbox" name="agreement" required>
+          <span>Я принимаю условия использования и политику конфиденциальности.</span>
+        </label>
+
+        <button class="auth-submit" type="submit">Создать аккаунт <span>→</span></button>
+      </form>
+
+      <p class="auth-status" id="authStatus" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО ТОВАРА -->
   <div class="product-modal" id="productModal">
     <div class="product-modal-backdrop" id="productModalBackdrop"></div>
     <div class="product-modal-content">
@@ -1697,7 +2422,7 @@
     <div class="search-results-wrap" id="searchResults"></div>
   </div>
 
-  <!-- ФУТЕР -->
+  <!-- ФУТЕР — БЕЛЫЙ -->
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
@@ -1717,8 +2442,12 @@
     </div>
 
     <div class="footer-bottom">
-      <span>© 2026 NOIR STUDIO. Все права защищены. By Sasha Antonov</span>
-     
+      <span>© 2026 NOIR STUDIO. Все права защищены.</span>
+      <nav>
+        <button>Конфиденциальность</button>
+        <button>Условия</button>
+        <button>Cookies</button>
+      </nav>
     </div>
   </footer>
 
@@ -1828,6 +2557,8 @@
   const cartBadge = document.getElementById('cartBadge');
   const cartItems = document.getElementById('cartItems');
   const cartTotal = document.getElementById('cartTotal');
+  const fabCount = document.getElementById('fabCount');
+  const fabCart = document.getElementById('fabCart');
 
   function openCart() {
     cartEl.classList.add('open');
@@ -1840,19 +2571,20 @@
     document.body.classList.remove('lock');
   }
 
-  document.getElementById('bagBtn').addEventListener('click', openCart);
+  fabCart.addEventListener('click', openCart);
   document.getElementById('closeCart').addEventListener('click', closeCart);
   backdrop.addEventListener('click', closeCart);
 
   function addToCart(product, size) {
     cart.push({ ...product, size });
     renderCart();
-    openCart();
   }
 
   function renderCart() {
     const count = cart.length;
     cartBadge.textContent = count;
+    fabCount.textContent = count;
+    fabCount.classList.toggle('visible', count > 0);
 
     if (!count) {
       cartItems.innerHTML = `
@@ -1970,6 +2702,96 @@
     closeProductModal();
   });
 
+  /* ========== АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ ========== */
+  const authModal = document.getElementById('authModal');
+  const authModalBackdrop = document.getElementById('authModalBackdrop');
+  const authModalClose = document.getElementById('authModalClose');
+  const authTabs = document.querySelectorAll('.auth-tab');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const authStatus = document.getElementById('authStatus');
+  const authTitle = document.getElementById('authModalTitle');
+  const authSubtitle = document.getElementById('authModalSubtitle');
+
+  function openAuth(tab = 'login') {
+    authModal.classList.add('open');
+    authModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lock');
+    switchAuthTab(tab);
+    setTimeout(() => {
+      const firstInput = authModal.querySelector('.auth-form.active input');
+      if (firstInput) firstInput.focus();
+    }, 280);
+  }
+
+  function closeAuth() {
+    authModal.classList.remove('open');
+    authModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lock');
+    authStatus.textContent = '';
+  }
+
+  function switchAuthTab(tab) {
+    const isRegister = tab === 'register';
+
+    authTabs.forEach(button => {
+      const active = button.dataset.authTab === tab;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', String(active));
+    });
+
+    loginForm.classList.toggle('active', !isRegister);
+    registerForm.classList.toggle('active', isRegister);
+
+    authTitle.textContent = isRegister ? 'Создайте аккаунт' : 'С возвращением';
+    authSubtitle.textContent = isRegister
+      ? 'Регистрация займёт меньше минуты. После этого данные заказа будут сохраняться в личном кабинете.'
+      : 'Войдите, чтобы сохранять данные и оформлять заказы быстрее.';
+    authStatus.textContent = '';
+  }
+
+  document.getElementById('bagBtn').addEventListener('click', () => openAuth('login'));
+
+  authTabs.forEach(button => {
+    button.addEventListener('click', () => switchAuthTab(button.dataset.authTab));
+  });
+
+  authModalClose.addEventListener('click', closeAuth);
+  authModalBackdrop.addEventListener('click', closeAuth);
+
+  document.querySelectorAll('[data-password-toggle]').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const input = toggle.parentElement.querySelector('input');
+      const visible = input.type === 'text';
+      input.type = visible ? 'password' : 'text';
+      toggle.textContent = visible ? 'Показать' : 'Скрыть';
+      toggle.setAttribute('aria-label', visible ? 'Показать пароль' : 'Скрыть пароль');
+    });
+  });
+
+  document.getElementById('forgotPassword').addEventListener('click', () => {
+    authStatus.textContent = 'Восстановление пароля можно подключить к вашему серверному обработчику.';
+  });
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    authStatus.textContent = 'Форма готова к подключению к авторизации.';
+  });
+
+  registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const password = registerForm.querySelector('[name="register-password"]').value;
+    const confirm = registerForm.querySelector('[name="register-password-confirm"]').value;
+
+    if (password !== confirm) {
+      authStatus.textContent = 'Пароли не совпадают.';
+      return;
+    }
+
+    authStatus.textContent = 'Форма готова к подключению к регистрации.';
+  });
+
   /* ========== ПОИСК ========== */
   const searchPanel = document.getElementById('searchPanel');
   const searchInput = document.getElementById('searchInput');
@@ -1990,7 +2812,16 @@
 
   document.getElementById('closeSearch').addEventListener('click', closeSearch);
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && searchPanel.classList.contains('open')) closeSearch();
+    if (e.key !== 'Escape') return;
+
+    if (authModal.classList.contains('open')) {
+      closeAuth();
+      return;
+    }
+
+    if (searchPanel.classList.contains('open')) {
+      closeSearch();
+    }
   });
 
   searchInput.addEventListener('input', () => {
