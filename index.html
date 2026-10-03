@@ -1805,13 +1805,7 @@
 
 
 
-  /* =========================================================
-     ФИНАЛЬНЫЕ ПРАВИЛА: ШАПКА И КОРЗИНА — ОДИНАКОВАЯ ЛОГИКА
-     появления/скрытия на адаптиве.
-     ========================================================= */
   @media (max-width: 1199px) {
-    /* Шапка: ровно такая же механика, как у корзины —
-       скрыта через transform и плавно приходит в открытое состояние. */
     .header {
       transform: translateY(calc(-100% - 24px));
       opacity: 1 !important;
@@ -1823,7 +1817,6 @@
       transform: translateY(0);
     }
 
-    /* Бургер всегда виден на адаптиве и не зависит от старых правил. */
     .header .menu-btn {
       display: flex !important;
       align-items: center;
@@ -1850,9 +1843,6 @@
       opacity: 1;
     }
 
-    /* Корзина полностью исчезает с экрана, включая тень,
-       пока класс .open не добавлен. При закрытии сначала
-       уезжает, затем становится visibility:hidden. */
     .cart {
       transform: translateX(calc(100% + 36px));
       visibility: hidden;
@@ -2083,11 +2073,7 @@
 
     <div class="footer-bottom">
       <span>© 2026 NOIR STUDIO. Все права защищены. By Sasha Antonov</span>
-      <nav>
-        <button>Конфиденциальность</button>
-        <button>Условия</button>
-        <button>Cookies</button>
-      </nav>
+    
     </div>
   </footer>
 
